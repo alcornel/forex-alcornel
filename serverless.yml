@@ -1,6 +1,6 @@
 service: forex-alcornel
 
-frameworkVersion: "<=1.26.0"
+frameworkVersion: "<=1.26.1"
 
 custom:
   namespace: ${self:service}-${self:custom.stage}
@@ -15,8 +15,8 @@ provider:
     CLIENT_ID: '305592088162.317094418068'
     CLIENT_SECRET: 78708383b9b8f2f0b189bc848b558604
     VERIFICATION_TOKEN: dqZuxgyToNp7yGFBbI6ykSuH
-    INSTALL_ERROR_URL: http://forexalcornel.s3-website-ap-southeast-1.amazonaws.com/#success 
-    INSTALL_SUCCESS_URL: http://forexalcornel.s3-website-ap-southeast-1.amazonaws.com/#error
+    INSTALL_ERROR_URL: http://forex-alcornel.s3-website-ap-southeast-1.amazonaws.com/#success 
+    INSTALL_SUCCESS_URL: http://forex-alcornel.s3-website-ap-southeast-1.amazonaws.com/#error
     NAMESPACE: ${self:custom.namespace}
     TEAMS_TABLE: ${self:custom.namespace}-teams
   iamRoleStatements:
@@ -26,8 +26,15 @@ provider:
         - dynamodb:PutItem
       Resource:
         - arn:aws:dynamodb:*:*:table/${self:provider.environment.TEAMS_TABLE}
+    - Effect: Allow
+      Action:
+        - lambda:invokeFunction
+      Resource:
+        - arn:aws:lambda:*:*:function:${self:custom.namespace}-actions
 
 functions:
+  actions:
+    handler: actions.handler
   events:
     handler: events.handler
     events:
